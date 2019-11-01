@@ -6,27 +6,7 @@
 
 <script>
 export default {
-    name: "notebook",
-    data() {
-        return {};
-    },
-    created() {},
-    methods: {},
-    mounted() {
-        try {
-            if (this.$store.state.user != null) {
-                this.user = this.$store.state.user;
-            } else {
-                this.user = {
-                    role: 0
-                };
-                window.location = "/";
-                return false;
-            }
-        } catch (e) {
-            window.location = "/";
-        }
-    }
+    name: "notebook"
 };
 </script>
 

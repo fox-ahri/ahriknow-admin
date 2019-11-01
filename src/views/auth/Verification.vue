@@ -49,7 +49,7 @@ export default {
         reSend() {
             let self = this;
             this.axios({
-                url: self.url + "/api/auth/verification/",
+                url: self.url + "/verification/auth/verification/",
                 method: "post",
                 data: JSON.stringify({ email: self.email }),
                 headers: {
@@ -100,7 +100,7 @@ export default {
         }
         let self = this;
         this.axios
-            .get(self.url + "/api/auth/verification/", {
+            .get(self.url + "/verification/auth/verification/", {
                 params: {
                     username: self.username
                 }

@@ -92,7 +92,7 @@ export default {
                     });
                     let self = this;
                     this.axios({
-                        url: self.url + "/api/auth/login/",
+                        url: self.url + "/verification/auth/login/",
                         method: "post",
                         data: JSON.stringify(self.ruleForm),
                         headers: {
@@ -110,22 +110,22 @@ export default {
                                     "SAVE_USER",
                                     response.data.data
                                 );
-                                self.loading.close();
                                 let from =
-                                    localStorage.getItem("from") || "home";
+                                    localStorage.getItem("from") || "/admin";
                                 if (
-                                    from == "auth-login" ||
-                                    from == "auth-register"
+                                    from == "/auth/login" ||
+                                    from == "/auth/register" ||
+                                    from == "/auth/verification"
                                 )
-                                    from = "home";
-                                self.$router.push({ name: from });
+                                    from = "/admin";
+                                localStorage.removeItem("from");
+                                self.$router.push(from);
                             } else if (response.data.code === 300) {
                                 self.$message({
                                     showClose: true,
                                     message: "用户被禁用",
                                     type: "error"
                                 });
-                                self.loading.close();
                             } else if (response.data.code === 301) {
                                 localStorage.setItem(
                                     "username",
@@ -135,22 +135,20 @@ export default {
                                     name: "auth-verification",
                                     params: self.ruleForm.username
                                 });
-                                self.loading.close();
                             } else if (response.data.code === 400) {
                                 self.$message({
                                     showClose: true,
                                     message: "用户名或密码错误",
                                     type: "warning"
                                 });
-                                self.loading.close();
                             } else {
                                 console.log(response);
                                 self.$message({
                                     showClose: true,
                                     message: "服务器内部错误"
                                 });
-                                self.loading.close();
                             }
+                            self.loading.close();
                         },
                         function(response) {
                             console.log(response);
@@ -182,6 +180,7 @@ export default {
     width: 100%;
     height: 100%;
     .box-card {
+        background: #fffc;
         position: absolute;
         left: 50%;
         top: 50%;

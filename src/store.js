@@ -28,6 +28,11 @@ const mutations = {
   SAVE_USER(state, user) {
     localStorage.setItem("auth", compileStr(user))
     state.user = JSON.parse(user)
+  },
+  LOGOUT(state) {
+    state.user = {
+      role: 0
+    }
   }
 }
 

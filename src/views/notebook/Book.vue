@@ -65,14 +65,8 @@
                     </el-table-column>
                 </el-table>
             </article>
-            <footer class="nocopy">
-                <router-link to="/admin">Home</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/login">Sign in</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/register">Sign up</router-link>&nbsp;|&nbsp;
-                <router-link to="/ahridata/survey">AhriData</router-link>&nbsp;|&nbsp;
-                <router-link to="/blog/survey">Ahriblog</router-link>&nbsp;|&nbsp;
-                <router-link to="/notebook/book">Notebook</router-link>&nbsp;|&nbsp;
-                <router-link to="/transfer/galaxy">Transfer</router-link>
+            <footer>
+                <foot-nav></foot-nav>
             </footer>
         </section>
         <el-dialog
@@ -116,11 +110,13 @@
 </template>
 
 <script>
-import CompNav from '@/components/CompNav.vue'
+import CompNav from "@/components/CompNav.vue";
+import FootNav from "@/components/FootNav.vue";
 export default {
     name: "notebook-book",
     components: {
-        "comp-nav": CompNav
+        "comp-nav": CompNav,
+        "foot-nav": FootNav
     },
     data() {
         return {
@@ -138,7 +134,7 @@ export default {
                 name: "",
                 describe: "",
                 private: "公开",
-                image: ""
+                image: "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
             },
             formLabelWidth: "120px",
             upload_url: this.url + "/api/notebook/upload/",
@@ -146,8 +142,20 @@ export default {
             loading: {}
         };
     },
-    created() {},
     methods: {
+        openFullScreen() {
+            this.loading = this.$loading({
+                lock: true,
+                text: "Loading",
+                spinner: "el-icon-loading",
+                background: "rgba(0, 0, 0, 0.7)"
+            });
+        },
+        closeFullScreen() {
+            try {
+                this.loading.close();
+            } catch {}
+        },
         handleEdit(index, row) {
             this.dialogFormVisible = true;
             this.edit = true;
@@ -195,7 +203,7 @@ export default {
                                     message: "服务器内部错误"
                                 });
                             }
-                            self.loading.close();
+                            self.closeFullScreen();
                         })
                         .catch(response => {
                             console.log(response);
@@ -203,7 +211,7 @@ export default {
                                 showClose: true,
                                 message: "客户端错误，请求失败"
                             });
-                            self.loading.close();
+                            self.closeFullScreen();
                         });
                 })
                 .catch(_ => {
@@ -214,8 +222,10 @@ export default {
                 });
         },
         handleWrite(index, row) {
-            localStorage.setItem("book", JSON.stringify(row));
-            this.$router.push({ name: "notebook-document", params: row });
+            this.$router.push({
+                name: "notebook-document",
+                query: { name: row.name, _id: row._id }
+            });
         },
         handleSizeChange(val) {
             this.tableData = this.data.slice(0, val);
@@ -242,14 +252,6 @@ export default {
                 });
             }
         },
-        openFullScreen() {
-            this.loading = this.$loading({
-                lock: true,
-                text: "Loading",
-                spinner: "el-icon-loading",
-                background: "rgba(0, 0, 0, 0.7)"
-            });
-        },
         submitForm() {
             if (this.edit) {
                 if (this.form.name == "") {
@@ -274,7 +276,7 @@ export default {
                                 name: "",
                                 describe: "",
                                 private: "公开",
-                                image: ""
+                                image: "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
                             };
                             self.data.forEach(item => {
                                 if (item._id == response.data.data._id) {
@@ -304,7 +306,7 @@ export default {
                                 message: "服务器内部错误"
                             });
                         }
-                        self.loading.close();
+                        self.closeFullScreen();
                     })
                     .catch(response => {
                         console.log(response);
@@ -312,7 +314,7 @@ export default {
                             showClose: true,
                             message: "客户端错误，请求失败"
                         });
-                        self.loading.close();
+                        self.closeFullScreen();
                     });
             } else {
                 if (this.form.name == "") {
@@ -351,7 +353,7 @@ export default {
                                 name: "",
                                 describe: "",
                                 private: "公开",
-                                image: ""
+                                image: "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
                             };
                             self.dialogFormVisible = false;
                         } else if (response.data.code === 400) {
@@ -367,7 +369,7 @@ export default {
                                 message: "服务器内部错误"
                             });
                         }
-                        self.loading.close();
+                        self.closeFullScreen();
                     },
                     function(response) {
                         console.log(response);
@@ -375,7 +377,7 @@ export default {
                             showClose: true,
                             message: "客户端错误，请求失败"
                         });
-                        self.loading.close();
+                        self.closeFullScreen();
                     }
                 );
             }
@@ -385,7 +387,7 @@ export default {
                 name: "",
                 describe: "",
                 private: "公开",
-                image: ""
+                image: "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
             };
             this.dialogFormVisible = false;
         }
@@ -422,7 +424,7 @@ export default {
                         message: "服务器内部错误"
                     });
                 }
-                self.loading.close();
+                self.closeFullScreen();
             })
             .catch(response => {
                 console.log(response);
@@ -430,13 +432,11 @@ export default {
                     showClose: true,
                     message: "客户端错误，请求失败"
                 });
-                self.loading.close();
+                self.closeFullScreen();
             });
     },
     beforeRouteLeave(to, from, next) {
-        try {
-            this.loading.close();
-        } catch {}
+        this.closeFullScreen();
         next();
     }
 };
@@ -458,13 +458,12 @@ export default {
         border: 1px dashed #d9d9d9;
         font-size: 28px;
         color: #8c939d;
-        width: 178px;
         height: 178px;
         line-height: 178px;
         text-align: center;
+        min-width: 178px;
     }
     .avatar {
-        width: 178px;
         height: 178px;
         display: block;
     }
@@ -491,17 +490,7 @@ export default {
         footer {
             width: 100%;
             height: 60px;
-            background: #eee;
             margin-top: -60px;
-            line-height: 60px;
-            text-align: center;
-            a {
-                font-size: 14px;
-                color: #2c3e50;
-                &.router-link-exact-active {
-                    color: #42b983;
-                }
-            }
         }
     }
 }

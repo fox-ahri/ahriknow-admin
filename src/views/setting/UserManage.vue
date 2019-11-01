@@ -2,6 +2,10 @@
     <div id="setting-usermanage" class="setting-usermanage">
         <div class="pagination nocopy">
             <el-button icon="el-icon-back" @click="goBack"></el-button>
+            <div class="nav">
+                <router-link to="/setting/document">Document</router-link>&nbsp;|&nbsp;
+                <router-link to="/setting/apply">Apply</router-link>
+            </div>
             <div>
                 <el-switch
                     style="margin:auto 20px"
@@ -271,8 +275,7 @@ export default {
             this.axios
                 .get(self.url + "/api/setting/user/", {
                     params: {
-                        user_id: self.user._id,
-                        role: self.user.role
+                        user_id: self.user._id
                     }
                 })
                 .then(response => {

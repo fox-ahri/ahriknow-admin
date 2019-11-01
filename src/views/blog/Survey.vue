@@ -24,7 +24,7 @@
                     <el-button type="primary" size="mini" @click="newBook">新建分类</el-button>
                 </div>
                 <div v-if="user.role < 50" class="pagination nocopy">
-                    <el-button type="primary" size="mini" @click="apply">申请自行发稿</el-button>
+                    <el-button type="primary" size="mini" @click="show = true">申请自行发稿</el-button>
                 </div>
                 <el-table
                     :data="tableData.filter(data => !search || data.name.includes(search.toLowerCase()))"
@@ -85,14 +85,8 @@
                     </el-table-column>
                 </el-table>
             </article>
-            <footer class="nocopy">
-                <router-link to="/admin">Home</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/login">Sign in</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/register">Sign up</router-link>&nbsp;|&nbsp;
-                <router-link to="/ahridata/survey">AhriData</router-link>&nbsp;|&nbsp;
-                <router-link to="/blog/survey">Ahriblog</router-link>&nbsp;|&nbsp;
-                <router-link to="/notebook/book">Notebook</router-link>
-                <!-- <router-link to="/transfer/galaxy">Transfer</router-link>&nbsp;|&nbsp; -->
+            <footer>
+                <foot-nav></foot-nav>
             </footer>
         </section>
         <el-dialog
@@ -132,15 +126,34 @@
                 <el-button type="primary" @click="submitForm">确 定</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="申请" :visible.sync="show">
+            <el-form>
+                <el-form-item label="留言" label-width="120px">
+                    <el-input
+                        autocomplete="off"
+                        type="textarea"
+                        placeholder="请输入留言"
+                        v-model="msg"
+                        rows="6"
+                    >></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="show = false">取 消</el-button>
+                <el-button type="primary" @click="apply">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import CompNav from "@/components/CompNav.vue";
+import FootNav from "@/components/FootNav.vue";
 export default {
     name: "blog-survey",
     components: {
-        "comp-nav": CompNav
+        "comp-nav": CompNav,
+        "foot-nav": FootNav
     },
     data() {
         return {
@@ -158,12 +171,15 @@ export default {
                 name: "",
                 describe: "",
                 contribute: "普通",
-                image: ""
+                image:
+                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_blog.jpg"
             },
             formLabelWidth: "120px",
             upload_url: this.url + "/api/ahriblog/upload/",
             edit: false,
-            loading: {}
+            loading: {},
+            show: false,
+            msg: ""
         };
     },
     created() {},
@@ -171,20 +187,21 @@ export default {
         apply() {
             let self = this;
             this.axios({
-                url: self.url + "/api/setting/user/",
+                url: self.url + "/api/setting/apply/",
                 method: "post",
-                data: JSON.stringify({ user_id: self.user._id }),
+                data: JSON.stringify({ user_id: self.user._id, name: 'ahriblog', msg: self.msg }),
                 headers: {
                     "Content-Type": "application/json"
                 }
             }).then(
                 function(response) {
                     if (response.data.code === 200) {
-                        this.$message({
+                        self.$message({
                             showClose: true,
                             message: "成功提交申请",
                             type: "success"
                         });
+                        self.show = false;
                     } else {
                         console.log(response);
                         self.$message({
@@ -205,13 +222,7 @@ export default {
         handleEdit(index, row) {
             this.dialogFormVisible = true;
             this.edit = true;
-            this.form = {
-                _id: row._id,
-                name: row.name,
-                describe: row.describe,
-                private: row.private,
-                image: row.image
-            };
+            this.form = row;
         },
         handleDelete(index, row) {
             this.$confirm("确认删除？", "确认:", { type: "error" })
@@ -268,8 +279,11 @@ export default {
                 });
         },
         handleWrite(index, row) {
-            localStorage.setItem("blog", JSON.stringify(row));
-            this.$router.push({ name: "blog-manage", params: row });
+            this.$router.push({
+                name: "blog-manage",
+                params: row,
+                query: { name: row.name, _id: row._id }
+            });
         },
         handleSizeChange(val) {
             this.tableData = this.data.slice(0, val);
@@ -284,6 +298,13 @@ export default {
             );
         },
         newBook() {
+            this.form = {
+                name: "",
+                describe: "",
+                contribute: "普通",
+                image:
+                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_blog.jpg"
+            };
             this.dialogFormVisible = true;
         },
         handleAvatarSuccess(response, file, fileList) {
@@ -343,7 +364,8 @@ export default {
                                 name: "",
                                 describe: "",
                                 contribute: "普通",
-                                image: ""
+                                image:
+                                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_blog.jpg"
                             };
                             self.dialogFormVisible = false;
                         } else if (response.data.code === 400) {
@@ -407,7 +429,8 @@ export default {
                                 name: "",
                                 describe: "",
                                 contribute: "普通",
-                                image: ""
+                                image:
+                                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_blog.jpg"
                             };
                             self.dialogFormVisible = false;
                         } else if (response.data.code === 400) {
@@ -441,7 +464,8 @@ export default {
                 name: "",
                 describe: "",
                 private: "公开",
-                image: ""
+                image:
+                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_blog.jpg"
             };
             this.dialogFormVisible = false;
         }
@@ -515,37 +539,17 @@ export default {
         border: 1px dashed #d9d9d9;
         font-size: 28px;
         color: #8c939d;
-        width: 178px;
+        min-width: 178px;
         height: 178px;
         line-height: 178px;
         text-align: center;
     }
     .avatar {
         width: 178px;
-        height: 178px;
         display: block;
     }
     height: 100%;
     overflow: hidden;
-    nav {
-        z-index: 100;
-        width: 100%;
-        height: 80px;
-        background: #fff;
-        box-shadow: #999 0 0 4px;
-        position: fixed;
-        top: 0;
-        left: 0;
-        line-height: 80px;
-        padding: 0 30px;
-        a {
-            font-weight: bold;
-            color: #2c3e50;
-            &.router-link-exact-active {
-                color: #42b983;
-            }
-        }
-    }
     section {
         z-index: 10;
         width: 100%;
@@ -567,17 +571,7 @@ export default {
         footer {
             width: 100%;
             height: 60px;
-            background: #eee;
             margin-top: -60px;
-            line-height: 60px;
-            text-align: center;
-            a {
-                font-size: 14px;
-                color: #2c3e50;
-                &.router-link-exact-active {
-                    color: #42b983;
-                }
-            }
         }
     }
 }

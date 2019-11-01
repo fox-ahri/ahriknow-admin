@@ -138,7 +138,7 @@ export default {
                     });
                     let self = this;
                     this.axios({
-                        url: self.url + "/api/auth/register/",
+                        url: self.url + "/verification/auth/register/",
                         method: "post",
                         data: JSON.stringify(self.ruleForm),
                         headers: {
@@ -209,6 +209,7 @@ export default {
     height: 100%;
     position: relative;
     .box-card {
+        background: #fffc;
         position: absolute;
         left: 50%;
         top: 50%;

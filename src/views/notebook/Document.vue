@@ -70,11 +70,7 @@
                 </div>
             </article>
             <footer>
-                <router-link to="/admin">Home</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/login">Sign in</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/register">Sign up</router-link>&nbsp;|&nbsp;
-                <router-link to="/ahridata/survey">AhriData</router-link>&nbsp;|&nbsp;
-                <router-link to="/notebook/book">Notebook</router-link>
+                <foot-nav></foot-nav>
             </footer>
         </section>
         <el-dialog
@@ -104,10 +100,12 @@
 <script>
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
+import FootNav from "@/components/FootNav.vue";
 export default {
     name: "notebook-document",
     components: {
-        mavonEditor
+        mavonEditor,
+        "foot-nav": FootNav
     },
     data() {
         return {
@@ -168,7 +166,6 @@ export default {
             loading: {}
         };
     },
-    created() {},
     methods: {
         goBack() {
             this.$router.push({ name: "notebook-book" });
@@ -428,15 +425,11 @@ export default {
             window.location = "/";
             return false;
         }
-        if (this.$route.params.hasOwnProperty("_id")) {
-            this.book = this.$route.params;
+        if (this.$route.query.hasOwnProperty("_id")) {
+            this.book.name = this.$route.query.name;
+            this.book._id = this.$route.query._id;
         } else {
-            if (localStorage.getItem("book")) {
-                this.book = JSON.parse(localStorage.getItem("book"));
-            } else {
-                this.$router.push({ name: "notebook-book" });
-                return;
-            }
+            this.$router.push({ name: "notebook-book" });
         }
         let self = this;
         this.openFullScreen();
@@ -452,8 +445,13 @@ export default {
                     localStorage.removeItem("auth");
                     self.$router.push("/auth/login");
                 } else if (response.data.code === 200) {
-                    self.book.catalog = response.data.data;
-                    self.data = self.book.catalog;
+                    self.data = response.data.data;
+                    if (self.data.length > 0) {
+                        self.read({
+                            id: self.data[0].id,
+                            label: self.data[0].label
+                        });
+                    }
                 } else {
                     console.log(response);
                     self.$message({
@@ -574,14 +572,7 @@ export default {
         footer {
             width: 100%;
             height: 60px;
-            background: #eee;
             margin-top: -60px;
-            line-height: 60px;
-            text-align: center;
-            a {
-                font-size: 14px;
-                color: #2c3e50;
-            }
         }
     }
 }

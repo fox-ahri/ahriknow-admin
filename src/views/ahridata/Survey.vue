@@ -3,8 +3,12 @@
         <comp-nav></comp-nav>
         <section>
             <article>
-                <el-tabs type="border-card">
-                    <el-tab-pane>
+                <div class="document">
+                    <a v-if="document != ''" :href="document" target="_black">参考文档</a>
+                </div>
+                <br />
+                <el-tabs type="border-card" v-model="tab">
+                    <el-tab-pane name="access">
                         <span slot="label" class="nocopy">
                             <i class="el-icon-setting"></i> AccessKey
                         </span>
@@ -20,21 +24,27 @@
                             <i class="el-icon-s-cooperation"></i> Library
                         </span>
                         <div class="download">
-                            <a
-                                href="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.es5.min.js"
-                                target="_black"
-                            >adata.es5.min.js</a>
-                            <a
-                                href="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.es6.min.js"
-                                target="_black"
-                            >adata.es6.min.js</a>
-                            <a
-                                href="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.js"
-                                target="_black"
-                            >adata.js</a>
+                            <div>
+                                <a
+                                    href="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.es5.min.js"
+                                    target="_black"
+                                >&lt;script src="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.es5.min.js" type="text/javascript"&gt;&lt;/script&gt;</a>
+                            </div>
+                            <div>
+                                <a
+                                    href="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.es6.min.js"
+                                    target="_black"
+                                >&lt;script src="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.es6.min.js" type="text/javascript"&gt;&lt;/script&gt;</a>
+                            </div>
+                            <div>
+                                <a
+                                    href="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.js"
+                                    target="_black"
+                                >&lt;script src="https://ahriknow.oss-cn-beijing.aliyuncs.com/adata.js" type="text/javascript"&gt;&lt;/script&gt;</a>
+                            </div>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane>
+                    <el-tab-pane name="dp">
                         <span slot="label" class="nocopy">
                             <i class="el-icon-s-data"></i> 数据池
                         </span>
@@ -125,7 +135,7 @@
                             </el-table>
                         </el-card>
                     </el-tab-pane>
-                    <el-tab-pane label="消息中心">
+                    <el-tab-pane name="fp">
                         <span slot="label" class="nocopy">
                             <i class="el-icon-files"></i> 文件池
                         </span>
@@ -174,14 +184,8 @@
                     </el-tab-pane>
                 </el-tabs>
             </article>
-            <footer class="nocopy">
-                <router-link to="/admin">Home</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/login">Sign in</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/register">Sign up</router-link>&nbsp;|&nbsp;
-                <router-link to="/ahridata/survey">AhriData</router-link>&nbsp;|&nbsp;
-                <router-link to="/blog/survey">Ahriblog</router-link>&nbsp;|&nbsp;
-                <router-link to="/notebook/book">Notebook</router-link>&nbsp;|&nbsp;
-                <router-link to="/transfer/galaxy">Transfer</router-link>
+            <footer>
+                <foot-nav></foot-nav>
             </footer>
         </section>
         <el-dialog
@@ -280,16 +284,19 @@
 
 <script>
 import CompNav from "@/components/CompNav.vue";
+import FootNav from "@/components/FootNav.vue";
 export default {
     name: "ahridata-survey",
     components: {
-        "comp-nav": CompNav
+        "comp-nav": CompNav,
+        "foot-nav": FootNav
     },
     data() {
         return {
             user: {
                 role: 0
             },
+            tab: "access",
             search: "",
             searchFile: "",
             show: false,
@@ -322,6 +329,7 @@ export default {
             typelist: ["int", "string", "boolen", "number"],
             tmp: "",
             fileData: [],
+            document: "",
             loading: {}
         };
     },
@@ -904,6 +912,39 @@ export default {
         }
         this.getData();
         this.getFilepool();
+        this.tab = this.$route.query.tab || "access";
+        let self = this;
+        this.openFullScreen();
+        this.axios
+            .get(self.url + "/api/setting/document/", {
+                params: {
+                    user_id: self.user._id,
+                    who: 2
+                }
+            })
+            .then(response => {
+                if (response.data.code === 0) {
+                    localStorage.removeItem("auth");
+                    self.$router.push("/auth/login");
+                } else if (response.data.code === 200) {
+                    self.document = response.data.data.url;
+                } else {
+                    console.log(response);
+                    self.$message({
+                        showClose: true,
+                        message: "服务器内部错误"
+                    });
+                }
+                self.loading.close();
+            })
+            .catch(response => {
+                console.log(response);
+                self.$message({
+                    showClose: true,
+                    message: "客户端错误，请求失败"
+                });
+                self.loading.close();
+            });
     },
     beforeRouteLeave(to, from, next) {
         try {
@@ -918,25 +959,6 @@ export default {
 #ahridata-survey {
     height: 100%;
     overflow: hidden;
-    nav {
-        z-index: 100;
-        width: 100%;
-        height: 80px;
-        background: #fff;
-        box-shadow: #999 0 0 4px;
-        position: fixed;
-        top: 0;
-        left: 0;
-        line-height: 80px;
-        padding: 0 30px;
-        a {
-            font-weight: bold;
-            color: #2c3e50;
-            &.router-link-exact-active {
-                color: #42b983;
-            }
-        }
-    }
     section {
         z-index: 10;
         width: 100%;
@@ -973,16 +995,17 @@ export default {
             }
             .download {
                 height: 300px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                a {
-                    margin: 20px;
-                    color: #888;
-                    font-size: 24px;
-                    transition: 0.2s;
-                    &:hover {
-                        color: #333;
+                div {
+                    margin: 40px;
+                    a {
+                        margin: 20px;
+                        color: #888;
+                        font-size: 20px;
+                        transition: 0.2s;
+                        text-decoration: none;
+                        &:hover {
+                            color: #333;
+                        }
                     }
                 }
             }
@@ -1092,17 +1115,7 @@ export default {
         footer {
             width: 100%;
             height: 60px;
-            background: #eee;
             margin-top: -60px;
-            line-height: 60px;
-            text-align: center;
-            a {
-                font-size: 14px;
-                color: #2c3e50;
-                &.router-link-exact-active {
-                    color: #42b983;
-                }
-            }
         }
     }
 }

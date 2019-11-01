@@ -119,12 +119,8 @@
                 </el-tabs>
             </div>
         </section>
-        <footer class="nocopy">
-            <router-link to="/admin">Home</router-link>&nbsp;|&nbsp;
-            <router-link to="/auth/login">Sign in</router-link>&nbsp;|&nbsp;
-            <router-link to="/auth/register">Sign up</router-link>&nbsp;|&nbsp;
-            <router-link to="/ahridata/survey">AhriData</router-link>&nbsp;|&nbsp;
-            <router-link to="/notebook/book">Notebook</router-link>
+        <footer>
+            <foot-nav></foot-nav>
         </footer>
         <el-dialog
             title="添加文件池"
@@ -147,8 +143,12 @@
 </template>
 
 <script>
+import FootNav from "@/components/FootNav.vue";
 export default {
     name: "ahridata-filedata",
+    components: {
+        "foot-nav": FootNav
+    },
     data() {
         return {
             user: {
@@ -184,7 +184,7 @@ export default {
             });
         },
         goBack() {
-            this.$router.push({ name: "ahridata-survey" });
+            this.$router.push("/ahridata/survey?tab=fp");
         },
         download(val) {
             return `${this.url}/api/ahridata/filedata/download/?user_id=${this.user._id}&_id=${val._id}`;
@@ -575,17 +575,7 @@ export default {
     footer {
         width: 100%;
         height: 60px;
-        background: #eee;
         margin-top: -60px;
-        line-height: 60px;
-        text-align: center;
-        a {
-            font-size: 14px;
-            color: #2c3e50;
-            &.router-link-exact-active {
-                color: #42b983;
-            }
-        }
     }
 }
 </style>

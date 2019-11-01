@@ -22,6 +22,8 @@ export default {
 #auth {
     width: 100%;
     height: 100%;
+    background: url("../assets/404.jpg") no-repeat center;
+    background-size: cover;
     .component-fade-enter-active,
     .component-fade-leave-active {
         transition: opacity 0.2s ease;

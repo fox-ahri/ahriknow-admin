@@ -6,11 +6,12 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import Vueaxios from 'vue-axios'
-import url from './assets/url'
+import { url, upload } from './assets/url'
 
 Vue.use(ElementUI);
 Vue.use(Vueaxios, axios)
 Vue.prototype.url = url
+Vue.prototype.upload = upload
 
 Vue.config.productionTip = false
 

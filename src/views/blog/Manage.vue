@@ -65,21 +65,47 @@
                             <el-form-item label="文章名">
                                 <el-input v-model="form.name" placeholder="文章名"></el-input>
                             </el-form-item>
+                            <div style="display: flex; justf">
+                                <el-form-item label="类型">
+                                    <el-select v-model="form.type" placeholder="请选择">
+                                        <el-option label="原创" value="1"></el-option>
+                                        <el-option label="转载" value="2"></el-option>
+                                        <el-option label="翻译" value="3"></el-option>
+                                    </el-select>
+                                </el-form-item>&nbsp;
+                                <el-input
+                                    v-model="form.url"
+                                    v-show="form.type == 2 || form.type == 3"
+                                    placeholder="引用链接"
+                                ></el-input>
+                            </div>
                             <el-form-item label="关键字">
                                 <el-input v-model="form.tags" placeholder="关键字 用 ‘，’ 分隔"></el-input>
                             </el-form-item>
-                            <el-form-item label="缩略图">
-                                <el-upload
-                                    class="avatar-uploader"
-                                    :data="{type:'book',user_id:user._id}"
-                                    :action="upload_url"
-                                    :show-file-list="false"
-                                    :on-success="handleAvatarSuccess"
-                                >
-                                    <img v-if="form.image" :src="form.image" class="avatar" />
-                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                                </el-upload>
-                            </el-form-item>
+                            <div style="display: flex">
+                                <el-form-item label="缩略图">
+                                    <el-upload
+                                        class="avatar-uploader"
+                                        :data="{type:'book',user_id:user._id}"
+                                        :action="upload_url"
+                                        :show-file-list="false"
+                                        :on-success="handleAvatarSuccess"
+                                    >
+                                        <img v-if="form.image" :src="form.image" class="avatar" />
+                                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                    </el-upload>
+                                </el-form-item>
+                                <el-form-item label="设置">
+                                    <el-switch
+                                        style="display: block;margin: 30px"
+                                        v-model="form.comment"
+                                        active-color="#13ce66"
+                                        inactive-color="#ff4949"
+                                        active-text="开启评论"
+                                        inactive-text="关闭评论"
+                                    ></el-switch>
+                                </el-form-item>
+                            </div>
                         </el-form>
                     </div>
                     <mavon-editor
@@ -92,8 +118,14 @@
                     ></mavon-editor>
                 </div>
                 <div v-show="!edit" class="right">
-                    <div class="button" v-if="art._id">
-                        <div class="doc">Article:&nbsp;&nbsp;{{ art.name }}</div>
+                    <div class="button">
+                        <div class="doc">
+                            Article:&nbsp;&nbsp;{{ art.name }}
+                            <el-tag v-if="art.type == 1" type="success">原创</el-tag>
+                            <el-tag v-if="art.type == 2">转载</el-tag>
+                            <el-tag v-if="art.type == 3" type="danger">翻译</el-tag>
+                            <el-tag type="info" v-if="!art.comment">已禁用评论</el-tag>
+                        </div>
                         <el-button v-if="user.role == 100" @click="setAbout">设为关于</el-button>
                         <el-button @click="handlEdit()">编辑</el-button>
                     </div>
@@ -101,13 +133,7 @@
                 </div>
             </article>
             <footer>
-                <router-link to="/admin">Home</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/login">Sign in</router-link>&nbsp;|&nbsp;
-                <router-link to="/auth/register">Sign up</router-link>&nbsp;|&nbsp;
-                <router-link to="/ahridata/survey">AhriData</router-link>&nbsp;|&nbsp;
-                <router-link to="/blog/survey">Ahriblog</router-link>&nbsp;|&nbsp;
-                <router-link to="/notebook/book">Notebook</router-link>
-                <!-- <router-link to="/transfer/galaxy">Transfer</router-link>&nbsp;|&nbsp; -->
+                <foot-nav></foot-nav>
             </footer>
         </section>
     </div>
@@ -116,10 +142,12 @@
 <script>
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
+import FootNav from "@/components/FootNav.vue";
 export default {
     name: "blog-manage",
     components: {
-        mavonEditor
+        mavonEditor,
+        "foot-nav": FootNav
     },
     data() {
         return {
@@ -134,7 +162,10 @@ export default {
                 n: false,
                 name: "",
                 tags: "",
-                image: ""
+                image: "",
+                type: "1",
+                url: "",
+                comment: true
             },
             art: {},
             edit: false,
@@ -182,10 +213,24 @@ export default {
     },
     created() {},
     methods: {
+        openFullScreen() {
+            this.loading = this.$loading({
+                lock: true,
+                text: "Loading",
+                spinner: "el-icon-loading",
+                background: "rgba(0, 0, 0, 0.7)"
+            });
+        },
+        closeFullScreen() {
+            try {
+                this.loading.close();
+            } catch {}
+        },
         goBack() {
             this.$router.push({ name: "blog-survey" });
         },
         setAbout() {
+            this.openFullScreen();
             let self = this;
             this.axios
                 .put(self.url + "/api/setting/about/", {
@@ -209,6 +254,7 @@ export default {
                             message: "服务器内部错误"
                         });
                     }
+                    self.closeFullScreen();
                 })
                 .catch(response => {
                     console.log(response);
@@ -216,6 +262,7 @@ export default {
                         showClose: true,
                         message: "客户端错误，请求失败"
                     });
+                    self.closeFullScreen();
                 });
         },
         deleteArticle(val) {
@@ -240,6 +287,7 @@ export default {
                                 self.article = self.article.filter(item => {
                                     return item._id != val._id;
                                 });
+                                self.editArticle(self.article[0]);
                                 self.$message({
                                     showClose: true,
                                     message: "删除成功",
@@ -252,7 +300,7 @@ export default {
                                     message: "服务器内部错误"
                                 });
                             }
-                            self.loading.close();
+                            self.closeFullScreen();
                         })
                         .catch(response => {
                             console.log(response);
@@ -260,7 +308,7 @@ export default {
                                 showClose: true,
                                 message: "客户端错误，请求失败"
                             });
-                            self.loading.close();
+                            self.closeFullScreen();
                         });
                 })
                 .catch(_ => {
@@ -325,6 +373,17 @@ export default {
             this.art = JSON.parse(JSON.stringify(val));
             this.form = this.art;
             this.edit = false;
+            if (
+                !this.$route.query.hasOwnProperty("art") ||
+                val._id != this.$route.query.art
+            ) {
+                let tmp = {};
+                for (let i in this.$route.query) {
+                    tmp[i] = this.$route.query[i];
+                }
+                tmp.art = val._id;
+                this.$router.push({ name: "blog-manage", query: tmp });
+            }
         },
         handlEdit() {
             this.edit = true;
@@ -334,7 +393,10 @@ export default {
                 n: true,
                 name: "",
                 tags: "",
-                image: ""
+                image: "",
+                type: "1",
+                url: "",
+                comment: true
             };
             this.content = "";
             this.edit = true;
@@ -342,7 +404,6 @@ export default {
         handlCancel() {
             this.form.n = false;
             this.edit = false;
-            this.art = {};
         },
         imgAdd(pos, file) {
             let param = new FormData();
@@ -370,18 +431,30 @@ export default {
                 });
             }
         },
-        openFullScreen() {
-            this.loading = this.$loading({
-                lock: true,
-                text: "Loading",
-                spinner: "el-icon-loading",
-                background: "rgba(0, 0, 0, 0.7)"
-            });
-        },
         handlsave() {
+            this.openFullScreen();
             if (this.form.n) {
+                if (this.form.type == 2 || this.form.type == 3) {
+                    if (this.content.indexOf(">[原文链接: ") == 0) {
+                        this.content = this.content.replace(
+                            /\>\[原文链接:\s\S+\](\S+)/,
+                            `>[原文链接: ${this.form.url}](${this.form.url})`
+                        );
+                    } else {
+                        this.content =
+                            `>[原文链接: ${this.form.url}](${this.form.url})` +
+                            "\n\n" +
+                            this.content;
+                    }
+                } else {
+                    if (this.content.indexOf(">[原文链接: ") == 0) {
+                        this.content = this.content.replace(
+                            /\>\[原文链接:\s\S+\](\S+)\n\n/,
+                            ""
+                        );
+                    }
+                }
                 let self = this;
-                this.openFullScreen();
                 this.form.user_id = this.user._id;
                 this.form.markdown = this.content;
                 this.form.html = this.html;
@@ -402,19 +475,13 @@ export default {
                     function(response) {
                         if (response.data.code === 200) {
                             self.article.push(response.data.data);
+                            self.editArticle(response.data.data);
                             self.$message({
                                 showClose: true,
                                 message: "添加成功",
                                 type: "success"
                             });
-                            self.form = {
-                                n: false,
-                                name: "",
-                                tags: "",
-                                image: ""
-                            };
                             self.edit = false;
-                            self.art = {};
                         } else if (response.data.code === 400) {
                             self.$message({
                                 showClose: true,
@@ -428,7 +495,7 @@ export default {
                                 message: "服务器内部错误"
                             });
                         }
-                        self.loading.close();
+                        self.closeFullScreen();
                     },
                     function(response) {
                         console.log(response);
@@ -436,15 +503,41 @@ export default {
                             showClose: true,
                             message: "客户端错误，请求失败"
                         });
-                        self.loading.close();
+                        self.closeFullScreen();
                     }
                 );
             } else {
-                let self = this;
                 this.openFullScreen();
+                if (this.form.type == 2 || this.form.type == 3) {
+                    if (this.content.indexOf(">[原文链接: ") == 0) {
+                        this.content = this.content.replace(
+                            /\>\[原文链接:\s\S+\](\S+)/,
+                            `>[原文链接: ${this.form.url}](${this.form.url})`
+                        );
+                    } else {
+                        this.content =
+                            `>[原文链接: ${this.form.url}](${this.form.url})` +
+                            "\n\n" +
+                            this.content;
+                    }
+                } else {
+                    if (this.content.indexOf(">[原文链接: ") == 0) {
+                        this.content = this.content.replace(
+                            /\>\[原文链接:\s\S+\](\S+)\n\n/,
+                            ""
+                        );
+                    }
+                }
+                let self = this;
                 this.form.user_id = this.user._id;
                 this.form.markdown = this.content;
                 this.form.html = this.html;
+                if (!this.form.hasOwnProperty("type")) {
+                    this.form.type = "1";
+                }
+                if (!this.form.hasOwnProperty("url")) {
+                    this.form.url = "";
+                }
                 this.axios
                     .put(self.url + "/api/ahriblog/article/", self.form)
                     .then(response => {
@@ -452,13 +545,7 @@ export default {
                             localStorage.removeItem("auth");
                             self.$router.push("/auth/login");
                         } else if (response.data.code === 200) {
-                            self.article.forEach(art => {
-                                if (art._id == response.data.data._id) {
-                                    for (let k in art) {
-                                        art[k] = response.data.data[k];
-                                    }
-                                }
-                            });
+                            self.getArticle();
                             self.$message({
                                 showClose: true,
                                 message: "更改成功",
@@ -478,7 +565,7 @@ export default {
                                 message: "服务器内部错误"
                             });
                         }
-                        self.loading.close();
+                        self.closeFullScreen();
                     })
                     .catch(response => {
                         console.log(response);
@@ -486,18 +573,18 @@ export default {
                             showClose: true,
                             message: "客户端错误，请求失败"
                         });
-                        self.loading.close();
+                        self.closeFullScreen();
                     });
             }
         },
         getArticle() {
+            this.openFullScreen();
             let self = this;
             this.axios
                 .get(self.url + "/api/ahriblog/article/", {
                     params: {
                         user_id: self.user._id,
-                        category: self.blog._id,
-                        role: self.user.role
+                        category: self.blog._id
                     }
                 })
                 .then(response => {
@@ -505,7 +592,18 @@ export default {
                         localStorage.removeItem("auth");
                         self.$router.push("/auth/login");
                     } else if (response.data.code === 200) {
-                        self.article = response.data.data;
+                        if (response.data.data.length > 0) {
+                            self.article = response.data.data;
+                            if (self.$route.query.hasOwnProperty("art")) {
+                                response.data.data.forEach(art => {
+                                    if (art._id == self.$route.query.art) {
+                                        self.editArticle(art);
+                                    }
+                                });
+                            } else {
+                                self.editArticle(response.data.data[0]);
+                            }
+                        }
                     } else {
                         console.log(response);
                         self.$message({
@@ -513,6 +611,7 @@ export default {
                             message: "服务器内部错误"
                         });
                     }
+                    self.closeFullScreen();
                 })
                 .catch(response => {
                     console.log(response);
@@ -520,6 +619,7 @@ export default {
                         showClose: true,
                         message: "客户端错误，请求失败"
                     });
+                    self.closeFullScreen();
                 });
         }
     },
@@ -533,20 +633,15 @@ export default {
             window.location = "/";
             return false;
         }
-        if (this.$route.params.hasOwnProperty("_id")) {
-            this.blog = this.$route.params;
+        if (this.$route.query.hasOwnProperty("_id")) {
+            this.blog._id = this.$route.query._id;
+            this.blog.name = this.$route.query.name;
         } else {
-            if (localStorage.getItem("blog")) {
-                this.blog = JSON.parse(localStorage.getItem("blog"));
-            } else {
-                this.$router.push({ name: "ahridata-survey" });
-                return;
-            }
+            this.$router.push({ name: "ahridata-survey" });
         }
         this.getArticle();
     },
     beforeRouteLeave(to, from, next) {
-        localStorage.removeItem("blog");
         try {
             this.loading.close();
         } catch {}
@@ -681,14 +776,7 @@ export default {
         footer {
             width: 100%;
             height: 60px;
-            background: #eee;
             margin-top: -60px;
-            line-height: 60px;
-            text-align: center;
-            a {
-                font-size: 14px;
-                color: #2c3e50;
-            }
         }
     }
 }
