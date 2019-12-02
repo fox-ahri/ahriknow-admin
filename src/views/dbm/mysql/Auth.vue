@@ -53,7 +53,7 @@ export default {
                 background: "rgba(0, 0, 0, 0.7)"
             });
             this.axios({
-                url: self.url + "/api/mysql/auth/",
+                url: self.url + "/dbm/mysql/auth/",
                 method: "post",
                 data: JSON.stringify(self.form),
                 headers: {
@@ -101,7 +101,14 @@ export default {
             );
         }
     },
-    mounted() {}
+    mounted() {
+        let params = this.$route.params;
+        if (params.hasOwnProperty("_id")) {
+            this.form.username = params.username;
+            this.form.password = params.password;
+            this.form.host = "aaahri.com";
+        }
+    }
 };
 </script>
 

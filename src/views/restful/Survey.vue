@@ -1,6 +1,6 @@
 <template>
     <div id="restful-survey" class="restful-survey">
-        <comp-nav></comp-nav>
+        <comp-nav active="/restful/survey"></comp-nav>
         <section>
             <article>
                 <div class="document">

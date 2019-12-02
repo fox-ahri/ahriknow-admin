@@ -6,13 +6,7 @@
 
 <script>
 export default {
-    name: "restful",
-    data() {
-        return {};
-    },
-    created() {},
-    methods: {},
-    mounted() {}
+    name: "restful"
 };
 </script>
 

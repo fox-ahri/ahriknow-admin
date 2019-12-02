@@ -1,6 +1,6 @@
 <template>
     <div id="notebook-book" class="notebook-book">
-        <comp-nav></comp-nav>
+        <comp-nav active="/notebook/book"></comp-nav>
         <section>
             <article>
                 <div class="pagination nocopy">

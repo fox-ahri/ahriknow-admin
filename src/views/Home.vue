@@ -7,6 +7,8 @@
                     &nbsp;|&nbsp;
                     <router-link to="/setting/document">Setting</router-link>
                 </span>
+                &nbsp;|&nbsp;
+                <router-link to="/tools">Tools</router-link>
             </div>
             <div class="btn">
                 <button v-show="user.role == 0" @click="to('/auth/login')">
@@ -27,7 +29,7 @@
             <el-carousel height="600px">
                 <el-carousel-item>
                     <div class="items" @click="goto('/ahridata/survey')">
-                        <img src="https://ahriknow.oss-cn-beijing.aliyuncs.com/1.jpg" alt="img" />
+                        <img src="https://aaahri.cn/1.jpg" alt="img" />
                         <div class="container">
                             <div>
                                 <i class="el-icon-s-data"></i>
@@ -42,7 +44,10 @@
                 </el-carousel-item>
                 <el-carousel-item>
                     <div class="items" @click="goto('/restful/survey')">
-                        <img src="https://ahriknow.oss-cn-beijing.aliyuncs.com/2.jpg?x-oss-process=image/auto-orient,1/quality,q_90/bright,-27" alt="img" />
+                        <img
+                            src="https://aaahri.cn/2.jpg?x-oss-process=image/auto-orient,1/quality,q_90/bright,-27"
+                            alt="img"
+                        />
                         <div class="container">
                             <div>
                                 <i class="el-icon-no-smoking"></i>
@@ -54,7 +59,10 @@
                 </el-carousel-item>
                 <el-carousel-item>
                     <div class="items" @click="goto('/website/survey')">
-                        <img src="https://ahriknow.oss-cn-beijing.aliyuncs.com/3.jpg?x-oss-process=image/auto-orient,1/quality,q_90/bright,-37" alt="img" />
+                        <img
+                            src="https://aaahri.cn/3.jpg?x-oss-process=image/auto-orient,1/quality,q_90/bright,-37"
+                            alt="img"
+                        />
                         <div class="container">
                             <div>
                                 <i class="iconfont akweb"></i>
@@ -83,11 +91,11 @@
                         <i class="el-icon-reading"></i>
                     </div>
                 </div>
-                <div class="item">
-                    <div class="title">文件传输</div>
-                    <div class="desc">在线多人交流，文件传输<br>未开放...</div>
+                <div class="item" @click="goto('/dbm/mongo-auth')">
+                    <div class="title">Mongo - Admin</div>
+                    <div class="desc">Mongo 在线管理系统</div>
                     <div>
-                        <i class="el-icon-sort"></i>
+                        <i class="iconfont akMongoDB"></i>
                     </div>
                 </div>
                 <div class="item" @click="goto('/dbm/mysql-auth')">
@@ -127,20 +135,37 @@
                     </div>
                 </div>
             </div>
+            <div class="item-article">
+                <mavon-editor
+                    :toolbarsFlag="false"
+                    v-model="html"
+                    :tabSize="4"
+                    defaultOpen="preview"
+                    :subfield="false"
+                    codeStyle="atom-one-dark"
+                ></mavon-editor>
+            </div>
             <div class="info">
-                <div class="item1">
+                <div class="item1 nocopy">
                     <div class="title">服务</div>
+                    <div class="service" @click="goto('/tools')">Tools</div>
                     <div class="service" @click="goto('/notebook/book')">Notebook</div>
                     <div class="service" @click="goto('/blog/survey')">Ahriblog</div>
                     <div class="service" @click="goto('/ahridata/survey')">Ahridata</div>
                     <div class="service" @click="goto('/restful/survey')">RestfulApi</div>
                     <div class="service" @click="goto('/website/survey')">WebSite</div>
-                    <div class="service" @click="goto('/dbm/mysql-auth')">MySQL-Admin</div>
+                    <div class="service" @click="goto('/dbm/mysql-auth')">Mysql-Admin</div>
                     <div class="service" @click="goto('/dbm/mongo-auth')">Mongo-Admin</div>
                 </div>
                 <div class="item2">
                     <div class="item3">
-                        <div class="i"></div>
+                        <div class="i">
+                            <a href="https://www.ahriknow.com" target="_black">博客：www.ahriknow.com</a>
+                            <a
+                                href="http://monitor.ahriknow.com"
+                                target="_black"
+                            >监控：monitor.ahriknow.com</a>
+                        </div>
                         <div class="contact">
                             <div class="i">联系我:</div>
                             <el-tooltip content="https://github.com/fox-ahri" placement="top">
@@ -174,8 +199,10 @@
                         </div>
                     </div>
                     <div class="item4">
-                        <div class="c">© 2019 吉ICP备 19000749号-5 版权所有</div>
-                        <div class="b">
+                        <div
+                            class="c"
+                        >© 2019 ahriknow.com 版权所有&nbsp;&nbsp;&nbsp;&nbsp;吉ICP备 19000749号-5</div>
+                        <!-- <div class="b">
                             <img src="../assets/TB2.gif" alt="1" />&nbsp;
                             <a
                                 href="http://www.beian.gov.cn/portal/registerSystemInfo"
@@ -184,7 +211,7 @@
                                 <img src="../assets/TB1.png" alt="2" />&nbsp;
                                 <span>吉公网安备 xxx号</span>
                             </a>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             </div>
@@ -193,14 +220,28 @@
 </template>
 
 <script>
+import "mavon-editor/dist/css/index.css";
+import { mavonEditor } from "mavon-editor";
 export default {
     name: "home",
+    components: {
+        mavonEditor
+    },
     data() {
         return {
             user: {
                 role: 0
-            }
+            },
+            html: ""
         };
+    },
+    created() {
+        window.loading = this.$loading({
+            lock: true,
+            text: "Loading",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)"
+        });
     },
     methods: {
         to(path) {
@@ -229,10 +270,6 @@ export default {
                 role: 0
             };
         }
-        let st = document.documentElement.scrollTop || document.body.scrollTop;
-        if (st >= 180) {
-            this.$refs.nav.style.background = `rgba(24,24,24,255)`;
-        }
         window.onscroll = () => {
             let scrollTop =
                 document.documentElement.scrollTop || document.body.scrollTop;
@@ -243,6 +280,31 @@ export default {
                 } catch {}
             }
         };
+        window.onload = () => {
+            let st =
+                document.documentElement.scrollTop || document.body.scrollTop;
+            if (st >= 180) {
+                this.$refs.nav.style.background = `rgba(24,24,24,0.9)`;
+            }
+        };
+        let self = this;
+        this.axios
+            .get(self.url + "/data/ahriblog/about/", {
+                params: {
+                    home: 11
+                }
+            })
+            .then(response => {
+                self.html = response.data.data.content;
+            })
+            .catch(response => {
+                console.log(response);
+            });
+        try {
+            setTimeout(() => {
+                window.loading.close();
+            }, 800);
+        } catch {}
     }
 };
 </script>
@@ -256,7 +318,7 @@ export default {
         width: 100%;
     }
     #nav {
-        z-index: 99;
+        z-index: 9999;
         padding: 30px;
         height: 80px;
         width: 100%;
@@ -315,7 +377,7 @@ export default {
             }
         }
         .items1 {
-            padding: 40px 0;
+            padding-top: 40px;
             height: 350px;
             width: 1000px;
             margin: 0 auto;
@@ -328,8 +390,9 @@ export default {
                 text-align: center;
                 cursor: pointer;
                 transition: 0.3s;
+                box-shadow: 0 0 5px rgba(71, 68, 68, 0.2);
                 &:hover {
-                    transform: scale(1.15);
+                    transform: scale(1.1);
                     background: rgb(240, 250, 250);
                 }
                 &:hover .title {
@@ -350,7 +413,7 @@ export default {
             }
         }
         .items2 {
-            padding: 40px 0;
+            padding-top: 40px;
             height: 350px;
             width: 1000px;
             margin: 0 auto;
@@ -363,8 +426,9 @@ export default {
                 text-align: center;
                 cursor: pointer;
                 transition: 0.3s;
+                box-shadow: 0 0 5px rgba(71, 68, 68, 0.2);
                 &:hover {
-                    transform: scale(1.15);
+                    transform: scale(1.1);
                     background: rgb(240, 250, 250);
                 }
                 &:hover .title {
@@ -384,6 +448,12 @@ export default {
                 }
             }
         }
+        .item-article {
+            background: #fff;
+            // padding: 30px;
+            width: 1000px;
+            margin: 40px auto;
+        }
         .info {
             height: 300px;
             background: rgb(24, 24, 24);
@@ -396,11 +466,11 @@ export default {
                 color: #ccc;
                 padding: 30px;
                 .title {
-                    font-size: 26px;
+                    font-size: 22px;
                 }
                 .service {
                     margin: 5px 10px;
-                    font-size: 18px;
+                    font-size: 16px;
                     cursor: pointer;
                     transition: 0.2s;
                     &:hover {
@@ -422,8 +492,19 @@ export default {
                     border-bottom: #777 solid 1px;
                     position: relative;
                     .i {
-                        height: 50px;
-                        transform: translateY(-10px);
+                        height: 100px;
+                        display: flex;
+                        flex-direction: column;
+                        padding: 50px 0 0 30px;
+                        a {
+                            font-size: 18px;
+                            color: #ccc;
+                            text-decoration: none;
+                            transition: 0.3s;
+                            &:hover {
+                                color: #aaa;
+                            }
+                        }
                     }
                     .contact {
                         position: absolute;
@@ -436,6 +517,7 @@ export default {
                             color: #ccc;
                             line-height: 50px;
                             padding: 0 30px;
+                            transform: translateY(-10px);
                         }
                         a {
                             text-decoration: none;

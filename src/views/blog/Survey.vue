@@ -1,6 +1,6 @@
 <template>
     <div id="blog-survey" class="blog-survey">
-        <comp-nav></comp-nav>
+        <comp-nav active="/blog/survey"></comp-nav>
         <section>
             <article>
                 <div v-if="user.role >= 50" class="pagination nocopy">

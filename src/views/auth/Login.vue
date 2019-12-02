@@ -51,6 +51,7 @@ export default {
     name: "auth-login",
     data() {
         var validateUsername = (rule, value, callback) => {
+            callback();
             if (value === "") {
                 callback(new Error("请输入用户名"));
             } else {
@@ -58,6 +59,7 @@ export default {
             }
         };
         var validatePassword = (rule, value, callback) => {
+            callback();
             if (value === "") {
                 callback(new Error("请输入密码"));
             } else {

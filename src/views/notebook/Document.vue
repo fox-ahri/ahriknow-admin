@@ -49,6 +49,7 @@
             <article>
                 <div v-show="edit" class="left">
                     <div class="button">
+                        <el-button @click="download(content)">下载</el-button>
                         <el-button @click="handlsave()">保存</el-button>
                         <el-button @click="handlCancel()">取消</el-button>
                     </div>
@@ -59,12 +60,20 @@
                         :toolbars="toolbars"
                         v-model="content"
                         :tabSize="4"
+                        codeStyle="atom-one-dark"
                     ></mavon-editor>
                 </div>
                 <div v-show="!edit" class="right">
                     <div class="button" v-if="document.id">
                         <div class="doc">Document:&nbsp;&nbsp;{{ document.name }}</div>
-                        <el-button @click="handlEdit()">编辑</el-button>
+                        <div>
+                            <el-button
+                                v-if="user.role == 100"
+                                @click="setAbout(document.content)"
+                            >首页展示</el-button>
+                            <el-button @click="download(document.content)">下载</el-button>
+                            <el-button @click="handlEdit()">编辑</el-button>
+                        </div>
                     </div>
                     <div class="content html markdown-body" v-html="html"></div>
                 </div>
@@ -167,6 +176,62 @@ export default {
         };
     },
     methods: {
+        download(val) {
+            let filename = this.document.name + ".md";
+            var element = document.createElement("a");
+            element.setAttribute(
+                "href",
+                "data:text/plain;charset=utf-8," + encodeURIComponent(val)
+            );
+            element.setAttribute("download", filename);
+            element.style.display = "none";
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        },
+        setAbout(val) {
+            this.openFullScreen();
+            let self = this;
+            this.axios({
+                url: self.url + "/api/setting/home/",
+                method: "post",
+                data: JSON.stringify({
+                    content: val,
+                    user_id: self.user._id
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(
+                function(response) {
+                    if (response.data.code === 0) {
+                        localStorage.removeItem("auth");
+                        self.$router.push("/auth/login");
+                    } else if (response.data.code === 200) {
+                        self.$message({
+                            showClose: true,
+                            message: "设置成功",
+                            type: "success"
+                        });
+                    } else {
+                        console.log(response.data);
+                        self.$message({
+                            showClose: true,
+                            message: "服务器内部错误"
+                        });
+                    }
+                    self.loading.close();
+                },
+                function(response) {
+                    console.log(response);
+                    self.$message({
+                        showClose: true,
+                        message: "客户端错误，请求失败"
+                    });
+                    self.loading.close();
+                }
+            );
+        },
         goBack() {
             this.$router.push({ name: "notebook-book" });
         },
@@ -248,7 +313,7 @@ export default {
             this.focus = true;
         },
         read(data) {
-            this.html = "";
+            // this.html = "";
             let self = this;
             this.openFullScreen();
             this.axios
@@ -331,6 +396,7 @@ export default {
         handlsave() {
             let self = this;
             this.openFullScreen();
+            this.document.content = this.content;
             this.axios
                 .put(self.url + "/api/notebook/document/", {
                     user_id: self.user._id,

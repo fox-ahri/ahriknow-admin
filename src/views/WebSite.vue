@@ -6,13 +6,7 @@
 
 <script>
 export default {
-    name: "website",
-    data() {
-        return {};
-    },
-    created() {},
-    methods: {},
-    mounted() {}
+    name: "website"
 };
 </script>
 

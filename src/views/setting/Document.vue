@@ -4,6 +4,7 @@
             <el-button icon="el-icon-back" @click="goBack"></el-button>
             <div class="nav">
                 <router-link to="/setting/user">UserManage</router-link>&nbsp;|&nbsp;
+                <router-link to="/setting/friend">Friend</router-link>&nbsp;|&nbsp;
                 <router-link to="/setting/apply">Apply</router-link>
             </div>
         </div>

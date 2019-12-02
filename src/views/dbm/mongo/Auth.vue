@@ -39,10 +39,10 @@ export default {
     data() {
         return {
             form: {
-                database: "admin",
-                username: "root",
-                password: "Aa12345!",
-                host: "127.0.0.1",
+                database: "",
+                username: "",
+                password: "",
+                host: "",
                 port: "27017"
             }
         };
@@ -57,7 +57,7 @@ export default {
                 background: "rgba(0, 0, 0, 0.7)"
             });
             this.axios({
-                url: self.url + "/api/mongo/auth/",
+                url: self.url + "/dbm/mongo/auth/",
                 method: "post",
                 data: JSON.stringify(self.form),
                 headers: {
@@ -77,7 +77,10 @@ export default {
                         );
                         self.$router.push({
                             name: "dbm-mongo-mongo",
-                            query: { user: self.form.username, db: self.form.database }
+                            query: {
+                                user: self.form.username,
+                                db: self.form.database
+                            }
                         });
                     } else if (response.data.code === 400) {
                         self.$message({
@@ -105,7 +108,15 @@ export default {
             );
         }
     },
-    mounted() {}
+    mounted() {
+        let params = this.$route.params;
+        if (params.hasOwnProperty("_id")) {
+            this.form.database = params.name;
+            this.form.username = params.username;
+            this.form.password = params.password;
+            this.form.host = "aaahri.com";
+        }
+    }
 };
 </script>
 

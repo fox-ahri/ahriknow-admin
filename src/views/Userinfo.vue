@@ -1,6 +1,6 @@
 <template>
     <div id="userinfo" class="userinfo">
-        <comp-nav></comp-nav>
+        <comp-nav active="/userinfo"></comp-nav>
         <section>
             <article>
                 <el-card class="box-card">
@@ -126,7 +126,6 @@ export default {
             upload_url: this.url + "/api/auth/upload/"
         };
     },
-    created() {},
     methods: {
         submitForm(formName) {
             this.$refs[formName].validate(valid => {
@@ -138,7 +137,7 @@ export default {
                     let self = this;
                     this.user.c = c;
                     this.axios
-                        .put(self.url + "/api/auth/change/", self.user)
+                        .put(self.url + "/verification/auth/change/", self.user)
                         .then(response => {
                             if (response.data.code === 0) {
                                 localStorage.removeItem("auth");

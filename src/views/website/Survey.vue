@@ -1,6 +1,6 @@
 <template>
     <div id="website-survey" class="website-survey">
-        <comp-nav></comp-nav>
+        <comp-nav active="/website/survey"></comp-nav>
         <section>
             <article v-if="!user.website">
                 <el-button type="primary" size="mini" @click="apply(false)">申请权限&nbsp\&nbsp刷新</el-button>
@@ -197,7 +197,7 @@
             :close-on-click-modal="false"
             width="80%"
         >
-            <el-table :data="files" style="width: 100%">
+            <el-table :data="files.filter(file => file.name != 'command.pid')" style="width: 100%">
                 <el-table-column label="Name">
                     <template slot-scope="scope">
                         <i v-show="scope.row.type == 'dir'" class="el-icon-folder-opened"></i>
@@ -213,6 +213,11 @@
                 <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
                         <div class="div" style="text-align: right">
+                            <el-button
+                                size="mini"
+                                v-if="scope.row.name.endWith('.jar')"
+                                @click="exec(scope.row)"
+                            >运行</el-button>
                             <el-button
                                 size="mini"
                                 v-if="scope.row.name.endWith('.zip')"
@@ -297,7 +302,6 @@ export default {
             msg: ""
         };
     },
-    created() {},
     methods: {
         apply(val) {
             if (!val) {
@@ -515,6 +519,43 @@ export default {
                     self.loading.close();
                 }
             );
+        },
+        exec(val) {
+            let self = this;
+            this.axios
+                .get(`https://ahriknow.org/exec`, {
+                    params: {
+                        cmd: `["kill -9 \`cat /www/wwwroot/${this.web.domain}/command.pid\`", "nohup java -jar /www/wwwroot/${this.web.domain}/${val.name} --server.port=19000 > log.txt 2>&1& echo $! > command.pid"]`
+                    }
+                })
+                .then(response => {
+                    if (response.data.code === 200) {
+                        self.$message({
+                            showClose: true,
+                            message: "启动成功",
+                            type: "success"
+                        });
+                    } else if (response.data.code === 400) {
+                        self.$message({
+                            showClose: true,
+                            message: "启动失败",
+                            type: "warning"
+                        });
+                    } else {
+                        console.log(response);
+                        self.$message({
+                            showClose: true,
+                            message: "服务器内部错误"
+                        });
+                    }
+                })
+                .catch(response => {
+                    console.log(response);
+                    self.$message({
+                        showClose: true,
+                        message: "客户端错误，请求失败"
+                    });
+                });
         },
         file(_id, domain) {
             this.web._id = _id;

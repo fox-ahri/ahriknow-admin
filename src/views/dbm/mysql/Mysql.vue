@@ -967,7 +967,7 @@ export default {
             let self = this;
             this.openFullScreen();
             this.axios({
-                url: self.url + "/api/mysql/mysql/",
+                url: self.url + "/dbm/mysql/mysql/",
                 method: "post",
                 data: JSON.stringify({
                     sql: sql,

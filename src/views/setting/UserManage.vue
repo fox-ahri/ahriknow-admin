@@ -4,6 +4,7 @@
             <el-button icon="el-icon-back" @click="goBack"></el-button>
             <div class="nav">
                 <router-link to="/setting/document">Document</router-link>&nbsp;|&nbsp;
+                <router-link to="/setting/friend">Friend</router-link>&nbsp;|&nbsp;
                 <router-link to="/setting/apply">Apply</router-link>
             </div>
             <div>
@@ -34,7 +35,7 @@
             highlight-current-row
             :default-sort="{prop: 'date', order: 'descending'}"
         >
-            <el-table-column label="Namename" prop="username"></el-table-column>
+            <el-table-column label="Username" prop="username"></el-table-column>
             <el-table-column label="Email" prop="email" sortable></el-table-column>
             <el-table-column label="Apply" prop="apply"></el-table-column>
             <el-table-column label="role" prop="role"></el-table-column>

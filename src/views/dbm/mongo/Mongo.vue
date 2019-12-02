@@ -447,7 +447,7 @@ export default {
             let self = this;
             this.openFullScreen();
             this.axios({
-                url: self.url + "/api/mongo/mongo/",
+                url: self.url + "/dbm/mongo/mongo/",
                 method: "post",
                 data: JSON.stringify({
                     sql: sql,

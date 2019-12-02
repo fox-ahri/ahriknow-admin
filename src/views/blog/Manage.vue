@@ -33,7 +33,9 @@
                         :type="i.disabled?'info':'primary'"
                         @click="editArticle(i)"
                     >
-                        <div class="name">{{i.name}}</div>
+                        <el-tooltip class="item" effect="dark" :content="i.name" placement="right">
+                            <div class="name">{{i.name}}</div>
+                        </el-tooltip>
                         <div class="other">
                             <el-switch
                                 v-if="user.role > 90"
@@ -115,6 +117,7 @@
                         :toolbars="toolbars"
                         v-model="content"
                         :tabSize="4"
+                        codeStyle="atom-one-dark"
                     ></mavon-editor>
                 </div>
                 <div v-show="!edit" class="right">
@@ -733,6 +736,12 @@ export default {
                     cursor: pointer;
                     .opera {
                         padding: 0;
+                    }
+                    .name {
+                        overflow: hidden;
+                        margin-right: 10px;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
                     }
                 }
             }

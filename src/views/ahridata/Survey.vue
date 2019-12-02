@@ -1,6 +1,6 @@
 <template>
     <div id="ahridata-survey" class="ahridata-survey">
-        <comp-nav></comp-nav>
+        <comp-nav active="/ahridata/survey"></comp-nav>
         <section>
             <article>
                 <div class="document">
