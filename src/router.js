@@ -293,6 +293,38 @@ const router = new Router({
                 name: 'tools-image',
                 component: () =>
                     import ( /* webpackChunkName: "tools-image" */ './views/tools/Image.vue'),
+            }, {
+                path: 'ocr',
+                name: 'tools-ocr',
+                component: () =>
+                    import ( /* webpackChunkName: "tools-ocr" */ './views/tools/Ocr.vue'),
+            }, {
+                path: 'json',
+                name: 'tools-json',
+                component: () =>
+                    import ( /* webpackChunkName: "tools-json" */ './views/tools/Json.vue'),
+            }, {
+                path: 'face',
+                name: 'tools-face',
+                component: () =>
+                    import ( /* webpackChunkName: "tools-face" */ './views/tools/baiduai/Face.vue'),
+            }]
+        }, {
+            path: '/dataview',
+            name: 'dataview',
+            component: () =>
+                import ( /* webpackChunkName: "dataview" */ './views/DataView.vue'),
+            redirect: "/dataview/survey",
+            children: [{
+                path: 'survey',
+                name: 'dataview-survey',
+                component: () =>
+                    import ( /* webpackChunkName: "dataview-survey" */ './views/dataview/Survey.vue'),
+            }, {
+                path: 'datav',
+                name: 'dataview-datav',
+                component: () =>
+                    import ( /* webpackChunkName: "dataview-datav" */ './views/dataview/DataV.vue'),
             }]
         },
         {

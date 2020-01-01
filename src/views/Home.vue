@@ -2,35 +2,44 @@
     <div id="home" class="home">
         <div id="nav" ref="nav" class="nocopy">
             <div class="a">
-                <router-link to="/admin">Ahriknow</router-link>
+                <router-link to="/admin">{{ $t('l.home.home') }}</router-link>
                 <span v-if="user.role == 100">
                     &nbsp;|&nbsp;
-                    <router-link to="/setting/document">Setting</router-link>
+                    <router-link to="/setting/document">{{ $t('l.home.setting') }}</router-link>
                 </span>
                 &nbsp;|&nbsp;
-                <router-link to="/tools">Tools</router-link>
+                <router-link to="/tools">{{ $t('l.home.tools') }}</router-link>
             </div>
             <div class="btn">
+                <el-tooltip class="item" effect="dark" placement="bottom">
+                    <div slot="content" style="display: flex;flex-direction: column">
+                        <el-button type="text" @click="change_lang('中文简体')">中文简体</el-button>
+                        <el-button type="text" @click="change_lang('English')">English</el-button>
+                    </div>
+                    <el-button type="text">
+                        <i>{{ this.$i18n.locale }}</i>
+                    </el-button>
+                </el-tooltip>
                 <button v-show="user.role == 0" @click="to('/auth/login')">
-                    <i class>登录</i>
+                    <i>{{ $t('l.home.login') }}</i>
                 </button>
                 <button v-show="user.role == 0" @click="to('/auth/register')">
-                    <i class>注册</i>
+                    <i>{{ $t('l.home.regist') }}</i>
                 </button>
                 <button v-show="user.role > 0" @click="to('/auth/logout')">
-                    <i class>退出</i>
+                    <i>{{ $t('l.home.exit') }}</i>
                 </button>
                 <button v-show="user.role > 0" @click="to('/userinfo')">
-                    <i class>我</i>
+                    <i>{{ $t('l.home.mine') }}</i>
                 </button>
             </div>
         </div>
         <div class="content">
-            <el-carousel height="600px">
+            <el-carousel height="600px" :interval="8000">
                 <el-carousel-item>
-                    <div class="items" @click="goto('/ahridata/survey')">
+                    <div class="items">
                         <img src="https://aaahri.cn/1.jpg" alt="img" />
-                        <div class="container">
+                        <div class="container" @click="goto('/ahridata/survey')">
                             <div>
                                 <i class="el-icon-s-data"></i>
                             </div>
@@ -43,12 +52,12 @@
                     </div>
                 </el-carousel-item>
                 <el-carousel-item>
-                    <div class="items" @click="goto('/restful/survey')">
+                    <div class="items">
                         <img
                             src="https://aaahri.cn/2.jpg?x-oss-process=image/auto-orient,1/quality,q_90/bright,-27"
                             alt="img"
                         />
-                        <div class="container">
+                        <div class="container" @click="goto('/restful/survey')">
                             <div>
                                 <i class="el-icon-no-smoking"></i>
                             </div>
@@ -58,12 +67,12 @@
                     </div>
                 </el-carousel-item>
                 <el-carousel-item>
-                    <div class="items" @click="goto('/website/survey')">
+                    <div class="items">
                         <img
                             src="https://aaahri.cn/3.jpg?x-oss-process=image/auto-orient,1/quality,q_90/bright,-37"
                             alt="img"
                         />
-                        <div class="container">
+                        <div class="container" @click="goto('/website/survey')">
                             <div>
                                 <i class="iconfont akweb"></i>
                             </div>
@@ -147,27 +156,39 @@
             </div>
             <div class="info">
                 <div class="item1 nocopy">
-                    <div class="title">服务</div>
-                    <div class="service" @click="goto('/tools')">Tools</div>
-                    <div class="service" @click="goto('/notebook/book')">Notebook</div>
-                    <div class="service" @click="goto('/blog/survey')">Ahriblog</div>
-                    <div class="service" @click="goto('/ahridata/survey')">Ahridata</div>
-                    <div class="service" @click="goto('/restful/survey')">RestfulApi</div>
-                    <div class="service" @click="goto('/website/survey')">WebSite</div>
-                    <div class="service" @click="goto('/dbm/mysql-auth')">Mysql-Admin</div>
-                    <div class="service" @click="goto('/dbm/mongo-auth')">Mongo-Admin</div>
+                    <div class="title">{{ $t('l.home.services') }}:</div>
+                    <div class="service" @click="goto('/tools')">{{ $t('l.comp.tools') }}</div>
+                    <div class="service" @click="goto('/notebook/book')">{{ $t('l.comp.notebook') }}</div>
+                    <div class="service" @click="goto('/blog/survey')">{{ $t('l.comp.ahriblog') }}</div>
+                    <div
+                        class="service"
+                        @click="goto('/ahridata/survey')"
+                    >{{ $t('l.comp.ahridata') }}</div>
+                    <div class="service" @click="goto('/restful/survey')">{{ $t('l.comp.restful') }}</div>
+                    <div class="service" @click="goto('/website/survey')">{{ $t('l.comp.website') }}</div>
+                    <div
+                        class="service"
+                        @click="goto('/dbm/mysql-auth')"
+                    >{{ $t('l.comp.dbms.mysql') }}</div>
+                    <div
+                        class="service"
+                        @click="goto('/dbm/mongo-auth')"
+                    >{{ $t('l.comp.dbms.mongo') }}</div>
                 </div>
                 <div class="item2">
                     <div class="item3">
                         <div class="i">
-                            <a href="https://www.ahriknow.com" target="_black">博客：www.ahriknow.com</a>
+                            <a
+                                href="https://www.ahriknow.com"
+                                target="_black"
+                            >{{ $t('l.home.blog') }}：www.ahriknow.com</a>
                             <a
                                 href="http://monitor.ahriknow.com"
                                 target="_black"
-                            >监控：monitor.ahriknow.com</a>
+                            >{{ $t('l.home.monitor') }}：monitor.ahriknow.com</a>
                         </div>
                         <div class="contact">
-                            <div class="i">联系我:</div>
+                            <div class="i">{{ $t('l.home.contact') }}:</div>
                             <el-tooltip content="https://github.com/fox-ahri" placement="top">
                                 <a href="https://github.com/fox-ahri" target="_black">
                                     <span>
@@ -244,6 +265,9 @@ export default {
         });
     },
     methods: {
+        change_lang(lang) {
+            this.$i18n.locale = lang;
+        },
         to(path) {
             if (path == "/auth/logout") {
                 localStorage.clear();
@@ -334,6 +358,9 @@ export default {
             &.router-link-exact-active {
                 color: #42b983;
             }
+            &:hover {
+                color: #bbb;
+            }
         }
         .btn {
             button {
@@ -344,7 +371,7 @@ export default {
                 cursor: pointer;
                 transition: 0.2s;
                 &:hover {
-                    color: #ccc;
+                    color: #ddd;
                 }
             }
         }
@@ -471,6 +498,7 @@ export default {
                 .service {
                     margin: 5px 10px;
                     font-size: 16px;
+                    line-height: 22px;
                     cursor: pointer;
                     transition: 0.2s;
                     &:hover {

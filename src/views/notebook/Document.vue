@@ -5,7 +5,7 @@
             <div class="tree">
                 <div class="opera">
                     <el-button icon="el-icon-back" @click="goBack"></el-button>
-                    <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
+                    <el-input :placeholder="$t('l.notebook.p2.filter')" v-model="filterText"></el-input>
                 </div>
                 <div class="catalog">
                     <el-tree
@@ -41,7 +41,7 @@
                         </span>
                     </el-tree>
                     <br />
-                    <el-button size="medium" style="width: 100%" @click="newDoc">添加</el-button>
+                    <el-button size="medium" style="width: 100%" @click="newDoc">{{ $t('l.notebook.p2.add') }}</el-button>
                 </div>
             </div>
         </aside>
@@ -49,9 +49,9 @@
             <article>
                 <div v-show="edit" class="left">
                     <div class="button">
-                        <el-button @click="download(content)">下载</el-button>
-                        <el-button @click="handlsave()">保存</el-button>
-                        <el-button @click="handlCancel()">取消</el-button>
+                        <el-button @click="download(content)">{{ $t('l.notebook.p2.download') }}</el-button>
+                        <el-button @click="handlsave()">{{ $t('l.notebook.p2.save') }}</el-button>
+                        <el-button @click="handlCancel()">{{ $t('l.notebook.p2.cancel') }}</el-button>
                     </div>
                     <mavon-editor
                         ref="md"
@@ -65,14 +65,14 @@
                 </div>
                 <div v-show="!edit" class="right">
                     <div class="button" v-if="document.id">
-                        <div class="doc">Document:&nbsp;&nbsp;{{ document.name }}</div>
+                        <div class="doc">{{ $t('l.notebook.p2.document') }}:&nbsp;&nbsp;{{ document.name }}</div>
                         <div>
                             <el-button
                                 v-if="user.role == 100"
                                 @click="setAbout(document.content)"
-                            >首页展示</el-button>
-                            <el-button @click="download(document.content)">下载</el-button>
-                            <el-button @click="handlEdit()">编辑</el-button>
+                            >{{ $t('l.notebook.p2.show_index') }}</el-button>
+                            <el-button @click="download(document.content)">{{ $t('l.notebook.p2.download') }}</el-button>
+                            <el-button @click="handlEdit()">{{ $t('l.notebook.p2.edit') }}</el-button>
                         </div>
                     </div>
                     <div class="content html markdown-body" v-html="html"></div>

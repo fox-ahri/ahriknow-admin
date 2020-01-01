@@ -1,14 +1,14 @@
 <template>
     <div id="tools-image" class="tools-image">
         <section>
-            <el-input placeholder="请输入 KEY" v-model="key" @keyup.enter.native="search">
+            <el-input :placeholder="$t('l.tools.image.inputKey')" v-model="key" @keyup.enter.native="search">
                 <div slot="append">
                     <el-button
                         icon="el-icon-search"
                         @click="search"
                         style="border-right: solid 1px #ccc"
-                    >查询</el-button>
-                    <el-button icon="el-icon-plus" @click="add">添加</el-button>
+                    >{{ $t('l.tools.image.search') }}</el-button>
+                    <el-button icon="el-icon-plus" @click="add">{{ $t('l.tools.image.add') }}</el-button>
                 </div>
             </el-input>
             <el-card v-for="i in items">
@@ -28,11 +28,11 @@
                             ></el-option>
                         </el-select>&nbsp;
                         <span>{{ i.url }}{{ key }}/{{ i.name }}</span>
-                        <el-input type="textarea" :rows="3" placeholder="请输入参数" v-model="i.params"></el-input>
+                        <el-input type="textarea" :rows="3" :placeholder="$t('l.tools.image.inputParams')" v-model="i.params"></el-input>
                         <div class="name" style="display: flex">
-                            <el-input v-model="i.name" placeholder="请求名"></el-input>
-                            <el-button icon="el-icon-s-order" @click="save(i)">保存</el-button>
-                            <el-button icon="el-icon-delete-solid" @click="deleteImg(i)">删除</el-button>
+                            <el-input v-model="i.name" :placeholder="$t('l.tools.image.requireName')"></el-input>
+                            <el-button icon="el-icon-s-order" @click="save(i)">{{ $t('l.tools.image.save') }}</el-button>
+                            <el-button icon="el-icon-delete-solid" @click="deleteImg(i)">{{ $t('l.tools.image.delete') }}</el-button>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@ export default {
     name: "tools-image",
     data() {
         return {
-            key: "",
+            key: "key",
             items: []
         };
     },
@@ -203,7 +203,9 @@ export default {
                 });
         }
     },
-    mounted() {}
+    mounted() {
+        this.getData();
+    }
 };
 </script>
 

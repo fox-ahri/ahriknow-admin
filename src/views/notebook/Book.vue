@@ -7,7 +7,7 @@
                     <el-switch
                         style="margin:auto 20px"
                         v-model="showImage"
-                        active-text="显示图片"
+                        :active-text="$t('l.notebook.p1.show_img')"
                         active-color="#13ce66"
                         inactive-color="#ff4949"
                     ></el-switch>
@@ -21,7 +21,11 @@
                         :total="this.data.length"
                         background
                     ></el-pagination>
-                    <el-button type="primary" size="mini" @click="newBook">新建笔记</el-button>
+                    <el-button
+                        type="primary"
+                        size="mini"
+                        @click="newBook"
+                    >{{ $t('l.notebook.p1.new') }}</el-button>
                 </div>
 
                 <el-table
@@ -31,11 +35,15 @@
                     highlight-current-row
                     :default-sort="{prop: 'date', order: 'descending'}"
                 >
-                    <el-table-column label="Name" prop="name"></el-table-column>
-                    <el-table-column label="Date" prop="date" sortable></el-table-column>
-                    <el-table-column label="Describe" prop="describe"></el-table-column>
-                    <el-table-column label="Private" prop="private"></el-table-column>
-                    <el-table-column label="Image" prop="image" v-if="showImage">
+                    <el-table-column :label="$t('l.notebook.p1.name')" prop="name"></el-table-column>
+                    <el-table-column :label="$t('l.notebook.p1.date')" prop="date" sortable></el-table-column>
+                    <el-table-column :label="$t('l.notebook.p1.desc')" prop="describe"></el-table-column>
+                    <el-table-column :label="$t('l.notebook.p1.private')" prop="private"></el-table-column>
+                    <el-table-column
+                        :label="$t('l.notebook.p1.image')"
+                        prop="image"
+                        v-if="showImage"
+                    >
                         <template slot-scope="scope">
                             <el-image
                                 style="width: 100px; height: 80px"
@@ -50,17 +58,20 @@
                             <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
                         </template>
                         <template slot-scope="scope">
-                            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+                            <el-button
+                                size="mini"
+                                @click="handleEdit(scope.$index, scope.row)"
+                            >{{ $t('l.notebook.p1.edit') }}</el-button>
                             <el-button
                                 size="mini"
                                 type="danger"
                                 @click="handleDelete(scope.$index, scope.row)"
-                            >Delete</el-button>
+                            >{{ $t('l.notebook.p1.delete') }}</el-button>
                             <el-button
                                 size="mini"
                                 type="primary"
                                 @click="handleWrite(scope.$index, scope.row)"
-                            >Write</el-button>
+                            >{{ $t('l.notebook.p1.manage') }}</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -134,7 +145,8 @@ export default {
                 name: "",
                 describe: "",
                 private: "公开",
-                image: "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
+                image:
+                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
             },
             formLabelWidth: "120px",
             upload_url: this.url + "/api/notebook/upload/",
@@ -276,7 +288,8 @@ export default {
                                 name: "",
                                 describe: "",
                                 private: "公开",
-                                image: "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
+                                image:
+                                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
                             };
                             self.data.forEach(item => {
                                 if (item._id == response.data.data._id) {
@@ -353,7 +366,8 @@ export default {
                                 name: "",
                                 describe: "",
                                 private: "公开",
-                                image: "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
+                                image:
+                                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
                             };
                             self.dialogFormVisible = false;
                         } else if (response.data.code === 400) {
@@ -387,7 +401,8 @@ export default {
                 name: "",
                 describe: "",
                 private: "公开",
-                image: "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
+                image:
+                    "https://ahriknow.oss-cn-beijing.aliyuncs.com/default_notebook.jpg"
             };
             this.dialogFormVisible = false;
         }

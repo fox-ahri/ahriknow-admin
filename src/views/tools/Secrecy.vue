@@ -3,7 +3,7 @@
         <el-row>
             <el-col :xs="12" :sm="10" :md="8" :lg="6">
                 <el-tabs tab-position="left" v-model="activeName">
-                    <el-tab-pane label="单向加密" name="first">
+                    <el-tab-pane :label="$t('l.tools.secrecy.ow')" name="first">
                         <div class="type">
                             <el-button plain @click="secrecy('md5')">MD5 En</el-button>
                         </div>
@@ -23,9 +23,9 @@
                             <el-button plain @click="secrecy('sha512')">SHA-512 En</el-button>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane label="对称加密" name="second">
+                    <el-tab-pane :label="$t('l.tools.secrecy.sy')" name="second">
                         <div class="type">
-                            <el-input v-model="key" placeholder="请输入 KEY"></el-input>
+                            <el-input v-model="key" :placeholder="$t('l.tools.secrecy.inputKey')"></el-input>
                         </div>
                         <div class="type">
                             <el-button plain @click="secrecy('des')">DES Encode</el-button>
@@ -52,7 +52,7 @@
                             <el-button plain @click="secrecy('d-base64')">Base64 Decode</el-button>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane label="非对称加密" name="thred">
+                    <el-tab-pane :label="$t('l.tools.secrecy.asy')" name="thred">
                         <div class="type">
                             <el-button plain @click="secrecy('rsa')">RSA Encode</el-button>
                         </div>
@@ -71,21 +71,21 @@
                                     <el-option label="1024" value="1024"></el-option>
                                     <el-option label="2048" value="2048"></el-option>
                                 </el-select>
-                                <el-input placeholder="请输入密码(为空不设置)" v-model="pass" clearable></el-input>
-                                <el-button plain @click="secrecy('')">生成</el-button>
+                                <el-input :placeholder="$t('l.tools.secrecy.inputPass')" v-model="pass" clearable></el-input>
+                                <el-button plain @click="secrecy('')">{{ $t('l.tools.secrecy.generate') }}</el-button>
                             </div>
                             <el-input
                                 clear="private"
                                 type="textarea"
                                 :rows="19"
-                                placeholder="Private Key"
+                                :placeholder="$t('l.tools.secrecy.privateKey')"
                                 v-model="priK"
                             ></el-input>
                             <br />
                             <el-input
                                 type="textarea"
                                 :rows="10"
-                                placeholder="Public Key"
+                                :placeholder="$t('l.tools.secrecy.publicKey')"
                                 v-model="pubK"
                             ></el-input>
                         </div>
@@ -100,7 +100,7 @@
                                         @click="code = ''"
                                         size="small"
                                         icon="el-icon-top"
-                                    >清空</el-button>
+                                    >{{ $t('l.tools.secrecy.clear') }}</el-button>
                                     <el-button
                                         plain
                                         v-clipboard:copy="code"
@@ -108,7 +108,7 @@
                                         v-clipboard:error="onError"
                                         size="small"
                                         icon="el-icon-top"
-                                    >复制</el-button>
+                                    >{{ $t('l.tools.secrecy.copy') }}</el-button>
                                     <el-button
                                         plain
                                         @click="code = result"
@@ -124,7 +124,7 @@
                                         @click="result = ''"
                                         size="small"
                                         icon="el-icon-bottom"
-                                    >清空</el-button>
+                                    >{{ $t('l.tools.secrecy.clear') }}</el-button>
                                     <el-button
                                         plain
                                         v-clipboard:copy="result"
@@ -132,7 +132,7 @@
                                         v-clipboard:error="onError"
                                         size="small"
                                         icon="el-icon-bottom"
-                                    >复制</el-button>
+                                    >{{ $t('l.tools.secrecy.copy') }}</el-button>
                                 </div>
                                 <codemirror v-model="result" :options="options"></codemirror>
                             </el-col>
@@ -174,7 +174,7 @@ export default {
     },
     methods: {
         copy() {
-            var Url2 = document.getElementById("test");
+            let Url2 = document.getElementById("test");
             Url2.select();
             document.execCommand("Copy");
             alert("已复制好，可贴粘。");

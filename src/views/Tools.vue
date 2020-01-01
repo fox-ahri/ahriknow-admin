@@ -3,8 +3,11 @@
         <comp-nav active="/tools/secrecy"></comp-nav>
         <section>
             <nav class="tools-nav">
-                <router-link to="/tools/secrecy">Secrecy</router-link>&nbsp;|&nbsp;
-                <router-link to="/tools/image">Image</router-link>
+                <router-link to="/tools/secrecy">{{ $t('l.tools.secrecy.title') }}</router-link>&nbsp;|&nbsp;
+                <router-link to="/tools/image">{{ $t('l.tools.image.title') }}</router-link>&nbsp;|&nbsp;
+                <router-link to="/tools/ocr">{{ $t('l.tools.ocr.title') }}</router-link>&nbsp;|&nbsp;
+                <router-link to="/tools/face">{{ $t('l.tools.faceDetect.title') }}</router-link>&nbsp;|&nbsp;
+                <router-link to="/tools/json">{{ $t('l.tools.json.title') }}</router-link>
             </nav>
             <router-view />
         </section>
@@ -32,6 +35,7 @@ export default {
         padding: 20px;
         .tools-nav {
             padding: 20px 0;
+            line-height: 30px;
             a {
                 font-weight: bold;
                 color: #2c3e50;

@@ -8,18 +8,19 @@
                 @select="handleSelect"
                 style="height: 70px;margin-top:10px"
             >
-                <el-menu-item index="/admin">Home</el-menu-item>
-                <el-menu-item index="/notebook/book">Notebook</el-menu-item>
-                <el-menu-item index="/blog/survey">Ahriblog</el-menu-item>
-                <el-menu-item index="/ahridata/survey">Ahridata</el-menu-item>
-                <el-menu-item index="/database/survey">Database</el-menu-item>
-                <el-menu-item index="/restful/survey">Restful</el-menu-item>
-                <el-menu-item index="/website/survey">Website</el-menu-item>
-                <el-menu-item index="/tools/secrecy">Tools</el-menu-item>
+                <el-menu-item index="/admin">{{ $t('l.comp.home') }}</el-menu-item>
+                <el-menu-item index="/notebook/book">{{ $t('l.comp.notebook') }}</el-menu-item>
+                <el-menu-item index="/blog/survey">{{ $t('l.comp.ahriblog') }}</el-menu-item>
+                <el-menu-item index="/ahridata/survey">{{ $t('l.comp.ahridata') }}</el-menu-item>
+                <el-menu-item index="/database/survey">{{ $t('l.comp.database') }}</el-menu-item>
+                <el-menu-item index="/dataview/survey">{{ $t('l.comp.dataview') }}</el-menu-item>
+                <el-menu-item index="/restful/survey">{{ $t('l.comp.restful') }}</el-menu-item>
+                <el-menu-item index="/website/survey">{{ $t('l.comp.website') }}</el-menu-item>
+                <el-menu-item index="/tools/secrecy">{{ $t('l.comp.tools') }}</el-menu-item>
                 <el-submenu index>
-                    <template slot="title">DBM</template>
-                    <el-menu-item index="/dbm/mysql-auth">MysqlAdmin</el-menu-item>
-                    <el-menu-item index="/dbm/mongo-auth">MongoAdmin</el-menu-item>
+                    <template slot="title">{{ $t('l.comp.dbm') }}</template>
+                    <el-menu-item index="/dbm/mysql-auth">{{ $t('l.comp.dbms.mysql') }}</el-menu-item>
+                    <el-menu-item index="/dbm/mongo-auth">{{ $t('l.comp.dbms.mongo') }}</el-menu-item>
                 </el-submenu>
             </el-menu>
             <!-- <div class="a">
@@ -36,8 +37,17 @@
                 &nbsp;|&nbsp;<router-link to="/transfer/galaxy">Transfer</router-link>
             </div>-->
             <div class="btn">
+                <el-tooltip class="item" effect="dark" placement="bottom">
+                    <div slot="content" style="display: flex;flex-direction: column">
+                        <el-button type="text" @click="change_lang('中文简体')">中文简体</el-button>
+                        <el-button type="text" @click="change_lang('English')">English</el-button>
+                    </div>
+                    <el-button type="text">
+                        <i>{{ this.$i18n.locale }}</i>
+                    </el-button>
+                </el-tooltip>
                 <button @click="logout()">
-                    <i class>退出</i>
+                    <i>{{ $t('l.comp.exit') }}</i>
                 </button>
             </div>
         </nav>
@@ -54,6 +64,9 @@ export default {
         };
     },
     methods: {
+        change_lang(lang) {
+            this.$i18n.locale = lang;
+        },
         logout() {
             localStorage.clear();
             this.$store.commit("LOGOUT");

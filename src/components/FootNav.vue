@@ -1,22 +1,28 @@
 <template>
     <div id="footnav" class="footnav nocopy">
-        <router-link to="/admin">Home</router-link>&nbsp;|&nbsp;
-        <router-link to="/notebook/book">Notebook</router-link>&nbsp;|&nbsp;
-        <router-link to="/blog/survey">Ahriblog</router-link>&nbsp;|&nbsp;
-        <router-link to="/ahridata/survey">AhriData</router-link>&nbsp;|&nbsp;
-        <router-link to="/database/survey">Database</router-link>&nbsp;|&nbsp;
-        <router-link to="/restful/survey">Restful</router-link>&nbsp;|&nbsp;
-        <router-link to="/website/survey">Website</router-link>&nbsp;|&nbsp;
-        <router-link to="/transfer/galaxy">Transfer</router-link>&nbsp;|&nbsp;
-        <router-link to="/dbm/mysql-auth">MysqlAdmin</router-link>&nbsp;|&nbsp;
-        <router-link to="/dbm/mongo-auth">MongoAdmin</router-link>&nbsp;|&nbsp;
-        <router-link to="/tools">Tools</router-link>
+        <router-link to="/admin">{{ $t('l.comp.home') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/notebook/book">{{ $t('l.comp.notebook') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/blog/survey">{{ $t('l.comp.ahriblog') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/ahridata/survey">{{ $t('l.comp.ahridata') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/database/survey">{{ $t('l.comp.database') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/dataview/survey">{{ $t('l.comp.dataview') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/restful/survey">{{ $t('l.comp.restful') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/website/survey">{{ $t('l.comp.website') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/transfer/galaxy">{{ $t('l.comp.transfer') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/dbm/mysql-auth">{{ $t('l.comp.dbms.mysql') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/dbm/mongo-auth">{{ $t('l.comp.dbms.mongo') }}</router-link>&nbsp;|&nbsp;
+        <router-link to="/tools">{{ $t('l.comp.tools') }}</router-link>
     </div>
 </template>
 
 <script>
 export default {
-    name: "footnav"
+    name: "footnav",
+    methods:{
+        change_lang(lang) {
+            this.$i18n.locale = lang;
+        }
+    }
 };
 </script>
 
